@@ -4915,7 +4915,10 @@
 		<constant name="ENV_BG_KEEP" value="5" enum="EnvironmentBG">
 			Do not clear the background, use whatever was rendered last frame as the background.
 		</constant>
-		<constant name="ENV_BG_MAX" value="7" enum="EnvironmentBG">
+		<constant name="ENV_BG_DUAL_SKY" value="7" enum="BGMode">
+            Allows using two different skies: One for ambient light computation and the other for display.
+		</constant>
+		<constant name="ENV_BG_MAX" value="8" enum="EnvironmentBG">
 			Represents the size of the [enum EnvironmentBG] enum.
 		</constant>
 		<constant name="ENV_DOF_BLUR_QUALITY_LOW" value="0" enum="EnvironmentDOFBlurQuality">

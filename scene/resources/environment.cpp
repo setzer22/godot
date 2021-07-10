@@ -57,6 +57,23 @@ void Environment::set_sky(const Ref<Sky> &p_sky) {
 	VS::get_singleton()->environment_set_sky(environment, sb_rid);
 }
 
+void Environment::set_cosmetic_sky(const Ref<Sky> &p_sky) {
+
+	bg_cosmetic_sky = p_sky;
+
+	RID sb_rid;
+	if (bg_cosmetic_sky.is_valid())
+		sb_rid = bg_cosmetic_sky->get_rid();
+
+	VS::get_singleton()->environment_set_cosmetic_sky(environment, sb_rid);
+}
+
+void Environment::set_cosmetic_sky_energy(float p_energy) {
+
+	bg_cosmetic_sky_energy = p_energy;
+	VS::get_singleton()->environment_set_cosmetic_sky_energy(environment, p_energy);
+}
+
 void Environment::set_sky_custom_fov(float p_scale) {
 
 	bg_sky_custom_fov = p_scale;
@@ -124,6 +141,16 @@ Environment::BGMode Environment::get_background() const {
 Ref<Sky> Environment::get_sky() const {
 
 	return bg_sky;
+}
+
+Ref<Sky> Environment::get_cosmetic_sky() const {
+
+	return bg_cosmetic_sky;
+}
+
+float Environment::get_cosmetic_sky_energy() const {
+
+	return bg_cosmetic_sky_energy;
 }
 
 float Environment::get_sky_custom_fov() const {
@@ -314,7 +341,7 @@ Ref<Texture> Environment::get_adjustment_color_correction() const {
 void Environment::_validate_property(PropertyInfo &property) const {
 
 	if (property.name == "background_sky" || property.name == "background_sky_custom_fov" || property.name == "background_sky_orientation" || property.name == "background_sky_rotation" || property.name == "background_sky_rotation_degrees" || property.name == "ambient_light/sky_contribution") {
-		if (bg_mode != BG_SKY && bg_mode != BG_COLOR_SKY) {
+		if (bg_mode != BG_SKY && bg_mode != BG_COLOR_SKY && bg_mode != BG_DUAL_SKY) {
 			property.usage = PROPERTY_USAGE_NOEDITOR | PROPERTY_USAGE_INTERNAL;
 		}
 	}
@@ -948,6 +975,8 @@ void Environment::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("set_background", "mode"), &Environment::set_background);
 	ClassDB::bind_method(D_METHOD("set_sky", "sky"), &Environment::set_sky);
+	ClassDB::bind_method(D_METHOD("set_cosmetic_sky", "sky"), &Environment::set_cosmetic_sky);
+	ClassDB::bind_method(D_METHOD("set_cosmetic_sky_energy", "energy"), &Environment::set_cosmetic_sky_energy);
 	ClassDB::bind_method(D_METHOD("set_sky_custom_fov", "scale"), &Environment::set_sky_custom_fov);
 	ClassDB::bind_method(D_METHOD("set_sky_orientation", "orientation"), &Environment::set_sky_orientation);
 	ClassDB::bind_method(D_METHOD("set_sky_rotation", "euler_radians"), &Environment::set_sky_rotation);
@@ -962,6 +991,8 @@ void Environment::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("get_background"), &Environment::get_background);
 	ClassDB::bind_method(D_METHOD("get_sky"), &Environment::get_sky);
+	ClassDB::bind_method(D_METHOD("get_cosmetic_sky"), &Environment::get_cosmetic_sky);
+	ClassDB::bind_method(D_METHOD("get_cosmetic_sky_energy"), &Environment::get_cosmetic_sky_energy);
 	ClassDB::bind_method(D_METHOD("get_sky_custom_fov"), &Environment::get_sky_custom_fov);
 	ClassDB::bind_method(D_METHOD("get_sky_orientation"), &Environment::get_sky_orientation);
 	ClassDB::bind_method(D_METHOD("get_sky_rotation"), &Environment::get_sky_rotation);
@@ -975,8 +1006,10 @@ void Environment::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_camera_feed_id"), &Environment::get_camera_feed_id);
 
 	ADD_GROUP("Background", "background_");
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "background_mode", PROPERTY_HINT_ENUM, "Clear Color,Custom Color,Sky,Color+Sky,Canvas,Keep,Camera Feed"), "set_background", "get_background");
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "background_mode", PROPERTY_HINT_ENUM, "Clear Color,Custom Color,Sky,Color+Sky,Canvas,Keep,Camera Feed,Dual Sky"), "set_background", "get_background");
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "background_sky", PROPERTY_HINT_RESOURCE_TYPE, "Sky"), "set_sky", "get_sky");
+	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "background_cosmetic_sky", PROPERTY_HINT_RESOURCE_TYPE, "Sky"), "set_cosmetic_sky", "get_cosmetic_sky");
+	ADD_PROPERTY(PropertyInfo(Variant::REAL, "background_cosmetic_sky_energy", PROPERTY_HINT_RANGE, "0,16,0.01"), "set_cosmetic_sky_energy", "get_cosmetic_sky_energy");
 	ADD_PROPERTY(PropertyInfo(Variant::REAL, "background_sky_custom_fov", PROPERTY_HINT_RANGE, "0,180,0.1"), "set_sky_custom_fov", "get_sky_custom_fov");
 	ADD_PROPERTY(PropertyInfo(Variant::BASIS, "background_sky_orientation"), "set_sky_orientation", "get_sky_orientation");
 	// Only display rotation in degrees in the inspector (like in Spatial).
@@ -1321,6 +1354,7 @@ Environment::Environment() :
 	environment = VS::get_singleton()->environment_create();
 
 	bg_mode = BG_CLEAR_COLOR;
+    bg_cosmetic_sky_energy = 1.0;
 	bg_sky_custom_fov = 0;
 	bg_sky_orientation = Basis();
 	bg_energy = 1.0;

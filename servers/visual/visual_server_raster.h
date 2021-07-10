@@ -506,6 +506,8 @@ public:
 
 	BIND2(environment_set_background, RID, EnvironmentBG)
 	BIND2(environment_set_sky, RID, RID)
+	BIND2(environment_set_cosmetic_sky, RID, RID)
+	BIND2(environment_set_cosmetic_sky_energy, RID, float)
 	BIND2(environment_set_sky_custom_fov, RID, float)
 	BIND2(environment_set_sky_orientation, RID, const Basis &)
 	BIND2(environment_set_bg_color, RID, const Color &)

@@ -784,6 +784,23 @@ void RasterizerSceneGLES3::environment_set_sky(RID p_env, RID p_sky) {
 	env->sky = p_sky;
 }
 
+void RasterizerSceneGLES3::environment_set_cosmetic_sky(RID p_env, RID p_sky) {
+
+	Environment *env = environment_owner.getornull(p_env);
+	ERR_FAIL_COND(!env);
+
+	env->cosmetic_sky = p_sky;
+}
+
+void RasterizerSceneGLES3::environment_set_cosmetic_sky_energy(RID p_env, float p_energy) {
+	Environment *env = environment_owner.getornull(p_env);
+	ERR_FAIL_COND(!env);
+
+	env->cosmetic_sky_energy = p_energy;
+}
+
+
+
 void RasterizerSceneGLES3::environment_set_sky_custom_fov(RID p_env, float p_scale) {
 
 	Environment *env = environment_owner.getornull(p_env);
@@ -4384,7 +4401,7 @@ void RasterizerSceneGLES3::render_scene(const Transform &p_cam_transform, const 
 
 		clear_color = env->bg_color.to_linear();
 		storage->frame.clear_request = false;
-	} else if (env->bg_mode == VS::ENV_BG_SKY) {
+	} else if (env->bg_mode == VS::ENV_BG_SKY || env->bg_mode == VS::ENV_BG_DUAL_SKY) {
 
 		storage->frame.clear_request = false;
 
@@ -4409,6 +4426,7 @@ void RasterizerSceneGLES3::render_scene(const Transform &p_cam_transform, const 
 	if (env) {
 		switch (bg_mode) {
 			case VS::ENV_BG_COLOR_SKY:
+			case VS::ENV_BG_DUAL_SKY:
 			case VS::ENV_BG_SKY:
 
 				sky = storage->sky_owner.getornull(env->sky);
@@ -4544,15 +4562,24 @@ void RasterizerSceneGLES3::render_scene(const Transform &p_cam_transform, const 
 		glDrawBuffers(1, &gldb);
 	}
 
-	if (env && env->bg_mode == VS::ENV_BG_SKY && (!storage->frame.current_rt || (!storage->frame.current_rt->flags[RasterizerStorage::RENDER_TARGET_TRANSPARENT] && state.debug_draw != VS::VIEWPORT_DEBUG_DRAW_OVERDRAW))) {
+	if (env && (env->bg_mode == VS::ENV_BG_SKY || env->bg_mode == VS::ENV_BG_DUAL_SKY) && (!storage->frame.current_rt || (!storage->frame.current_rt->flags[RasterizerStorage::RENDER_TARGET_TRANSPARENT] && state.debug_draw != VS::VIEWPORT_DEBUG_DRAW_OVERDRAW))) {
 
 		/*
 		if (use_mrt) {
 			glBindFramebuffer(GL_FRAMEBUFFER,storage->frame.current_rt->buffers.fbo); //switch to alpha fbo for sky, only diffuse/ambient matters
 		*/
 
+
+	    RasterizerStorageGLES3::Sky *drawn_sky = sky;
+        float energy = env->bg_energy;
+
+        if (env->bg_mode == VS::ENV_BG_DUAL_SKY) {
+            drawn_sky = storage->sky_owner.getornull(env->cosmetic_sky);
+            energy = env->cosmetic_sky_energy;
+        }
+
 		if (sky && sky->panorama.is_valid())
-			_draw_sky(sky, p_cam_projection, p_cam_transform, false, env->sky_custom_fov, env->bg_energy, env->sky_orientation);
+			_draw_sky(drawn_sky, p_cam_projection, p_cam_transform, false, env->sky_custom_fov, energy, env->sky_orientation);
 	}
 
 	//_render_list_forward(&alpha_render_list,camera_transform,camera_transform_inverse,camera_projection,false,fragment_lighting,true);

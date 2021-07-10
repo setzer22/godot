@@ -55,6 +55,8 @@ public:
 
 	void environment_set_background(RID p_env, VS::EnvironmentBG p_bg) {}
 	void environment_set_sky(RID p_env, RID p_sky) {}
+	void environment_set_cosmetic_sky(RID p_env, RID p_sky) {}
+	void environment_set_cosmetic_sky_energy(RID p_env, float p_energy) {}
 	void environment_set_sky_custom_fov(RID p_env, float p_scale) {}
 	void environment_set_sky_orientation(RID p_env, const Basis &p_orientation) {}
 	void environment_set_bg_color(RID p_env, const Color &p_color) {}

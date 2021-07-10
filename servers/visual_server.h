@@ -732,11 +732,14 @@ public:
 		ENV_BG_CANVAS,
 		ENV_BG_KEEP,
 		ENV_BG_CAMERA_FEED,
+		ENV_BG_DUAL_SKY,
 		ENV_BG_MAX
 	};
 
 	virtual void environment_set_background(RID p_env, EnvironmentBG p_bg) = 0;
 	virtual void environment_set_sky(RID p_env, RID p_sky) = 0;
+	virtual void environment_set_cosmetic_sky(RID p_env, RID p_sky) = 0;
+	virtual void environment_set_cosmetic_sky_energy(RID p_env, float p_energy) = 0;
 	virtual void environment_set_sky_custom_fov(RID p_env, float p_scale) = 0;
 	virtual void environment_set_sky_orientation(RID p_env, const Basis &p_orientation) = 0;
 	virtual void environment_set_bg_color(RID p_env, const Color &p_color) = 0;

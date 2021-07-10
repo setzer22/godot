@@ -317,7 +317,10 @@
 		<constant name="BG_CAMERA_FEED" value="6" enum="BGMode">
 			Displays a camera feed in the background.
 		</constant>
-		<constant name="BG_MAX" value="7" enum="BGMode">
+		<constant name="BG_DUAL_SKY" value="7" enum="BGMode">
+            Allows using two different skies: One for ambient light computation and the other for display.
+		</constant>
+		<constant name="BG_MAX" value="8" enum="BGMode">
 			Represents the size of the [enum BGMode] enum.
 		</constant>
 		<constant name="GLOW_BLEND_MODE_ADDITIVE" value="0" enum="GlowBlendMode">

@@ -50,6 +50,7 @@ public:
 		BG_CANVAS,
 		BG_KEEP,
 		BG_CAMERA_FEED,
+		BG_DUAL_SKY,
 		BG_MAX
 	};
 
@@ -91,6 +92,8 @@ private:
 
 	BGMode bg_mode;
 	Ref<Sky> bg_sky;
+	Ref<Sky> bg_cosmetic_sky;
+    float bg_cosmetic_sky_energy;
 	float bg_sky_custom_fov;
 	Basis bg_sky_orientation;
 	Color bg_color;
@@ -184,6 +187,8 @@ protected:
 public:
 	void set_background(BGMode p_bg);
 	void set_sky(const Ref<Sky> &p_sky);
+	void set_cosmetic_sky(const Ref<Sky> &p_sky);
+	void set_cosmetic_sky_energy(float p_energy);
 	void set_sky_custom_fov(float p_scale);
 	void set_sky_orientation(const Basis &p_orientation);
 	void set_sky_rotation(const Vector3 &p_euler_rad);
@@ -198,6 +203,8 @@ public:
 
 	BGMode get_background() const;
 	Ref<Sky> get_sky() const;
+	Ref<Sky> get_cosmetic_sky() const;
+	float get_cosmetic_sky_energy() const;
 	float get_sky_custom_fov() const;
 	Basis get_sky_orientation() const;
 	Vector3 get_sky_rotation() const;
